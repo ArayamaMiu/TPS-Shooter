@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class MovementStateManeger : MonoBehaviour
 {
-    public float _moveSpeed = 3f;
-    float _hzInput, _vInput;
-
+    public float _currentMoveSpeed;
+    public float _walkSpeed = 3,_walkBackspeed = 2;
+    public float _runSpeed =7 , _runBackspeed = 5;
+    
+    [HideInInspector] public float _hzInput, _vInput;
     [HideInInspector] public Vector3 _dir;
 
     CharacterController _characterController;
@@ -17,11 +19,21 @@ public class MovementStateManeger : MonoBehaviour
     [SerializeField] float _gravity = -9.81f;
     Vector3 _velocity;
 
+    MovementBaseState _currentState;
+
+    public IdleState Idle = new IdleState();
+    public WalkingState Walk = new WalkingState();
+    public RunningState Run = new RunningState();
+
+    [HideInInspector] public Animator _anim;
+
 
 
     void Start()
     {
+        _anim = GetComponentInChildren<Animator>();
         _characterController = GetComponent<CharacterController>();
+        SwitchState(Idle);
     }
 
     // Update is called once per frame
@@ -29,6 +41,17 @@ public class MovementStateManeger : MonoBehaviour
     {
         Gravity();
         GetDirectionMove();
+
+        _anim.SetFloat("hzInput", _hzInput);
+        _anim.SetFloat("vInput", _vInput);
+
+        _currentState.UpdateState(this);
+    }
+
+    public void SwitchState(MovementBaseState state)
+    {
+        _currentState = state;
+        _currentState.EnterState(this);
     }
 
 
@@ -40,7 +63,7 @@ public class MovementStateManeger : MonoBehaviour
 
         _dir = transform.forward * _vInput + transform.right * _hzInput;
 
-        _characterController.Move(_dir.normalized * _moveSpeed * Time.deltaTime);
+        _characterController.Move(_dir.normalized * _currentMoveSpeed * Time.deltaTime);
     }
 
     bool IsGrounded()

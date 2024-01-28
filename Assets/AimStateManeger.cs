@@ -16,7 +16,7 @@ public class AimStateManeger : MonoBehaviour
     void Update()
     {
         _xaxis += Input.GetAxisRaw("Mouse X") * _mouseSencce;
-        _yaxis += Input.GetAxisRaw("Mouse Y") * _mouseSencce;
+        _yaxis -= Input.GetAxisRaw("Mouse Y") * _mouseSencce;
         _yaxis = Mathf.Clamp(_yaxis, -80, 80);
     }
 
