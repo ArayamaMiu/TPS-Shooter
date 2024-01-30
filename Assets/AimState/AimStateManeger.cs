@@ -20,7 +20,8 @@ public class AimStateManeger : MonoBehaviour
     [HideInInspector] public float _currentFov;
     public float _fovSmoothSpeed = 10;
 
-    [SerializeField] Transform _aimPos;
+    public Transform _aimPos;
+    [HideInInspector] public Vector3 _actualAimPos;
     [SerializeField] float _aimSmoothspeed = 20;
     [SerializeField] LayerMask _aimMask;
 
