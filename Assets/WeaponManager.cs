@@ -18,23 +18,34 @@ public class WeaponManager : MonoBehaviour
 
     [SerializeField] AudioClip _gunShot;
     AudioSource _audioSource;
+
+    WeaponAmmo _ammo;
+    ActionStateManager _actions;
     void Start()
     {
         _audioSource = GetComponent<AudioSource>();
         aim = GetComponentInParent<AimStateManeger>();
+        _ammo = GetComponentInParent<WeaponAmmo>();
+        _actions = GetComponentInParent<ActionStateManager>();
         _fireRateTimer = _firerate;
+
     }
 
     // Update is called once per frame
     void Update()
     {
         if (ShouldFire()) Fire();
+        Debug.Log(_ammo._currentAmmo);
     }
 
     bool ShouldFire()
     {
         _fireRateTimer += Time.deltaTime;
         if (_fireRateTimer < _firerate) return false;
+
+        if(_ammo._currentAmmo == 0)return false;
+
+        if(_actions._currentState == _actions.Reload)return false;
        
         if (_semiAuto && Input.GetKeyDown(KeyCode.Mouse0)) return true;
        
@@ -47,6 +58,7 @@ public class WeaponManager : MonoBehaviour
         _fireRateTimer = 0;
         _barrelPos.LookAt(aim._aimPos);
         _audioSource.PlayOneShot(_gunShot);
+        _ammo._currentAmmo--;
 
         for (int i = 0; i < _bulletPerShot; i++)
         {
